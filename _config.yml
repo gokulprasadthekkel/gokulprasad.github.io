@@ -39,11 +39,3 @@ staticman_url: https://staticman-gptbot.herokuapp.com/v2/entry/gokulprasadthekke
 reCaptcha:
   siteKey: 6Lcrk7wZAAAAAIhNFwVyYU54eX4LG_x3mpCW0qw3
   secret: ICCP0XzgMb09kR0sAm5ZsYuWe82+nQrYzeWMzdRjpE+UfjegwSdrOxebqpGFoS435GpZxmsP4u16SxZGdtvylbneZsVWPPxEWQJqXr144/IW7IvTXAJtvJ/L0v6iepRee2lAz+8q0Tfwnxde9eJGSglu+eyUQ/wkMSQbdpLt5pbswyL1UK/h2ZtnUO2jbakv2IGIj3UBH+bp6AT2aC+rew0+v9heNxUiZYdpG7Q7NDlU1M94FGK6JvuKLtXrnsvjbGqy6O/mwST5PYQk3qNWVAVpexPtZO1Qvpp72V3a9Z1Yuuzsv5OsE/xHOyhOOwzMyGQGIZJTPR8csA5jV6TpmR7BUME1q0vLnN5tA5ChWQ3UUYJRsIwkbi4kZRTmCmaiJTheaKMfIgHuG6hBzeiJF0DOEaSY3ZpCT0LoIEBdH+2uwDa/OsIkK+vRSlF7YnF1dplisoUJUjb22/lQharRQle50M+gcjFtjnhbo+Zsu/VVw+eBaam6+APxjEr24aV1FbIJVy2FDtZUC+ur4rJHEu/IzRA3QlSWwWHbq6iaVuutYMiY32XjvM+dHA5VnH1Z7/+hCRJmtusXePjbZOjFNgJZyfsK0beZMi3t0jZHTMiAsnbqeKQ6iyMJy98oNklVnH6tb4o+i8vBHvv29/6MMyyqtjggbWHO6xeZzzbwH+E=
-
-  defaults:
-  # Post defaults
-  - scope:
-      path: "_posts"
-      type: posts
-    values:
-      comments: true

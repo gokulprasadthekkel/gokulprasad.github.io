@@ -6,7 +6,7 @@ description: sample description # Add post description (optional)
 img: imbalance.jpg # Add image post (optional)
 fig-caption: imbalance in datasets # Add figcaption (optional)
 tags: [data, imbalance]
-comment: true
+comments: true
 ---
 If you are a data scientist or an ML engineer, you frequently come across imbalanced datasets and when it comes to classifying them, it's a mess! I had encountered this situation recently and tried out multiple approaches to address the problem. This article is about one of such approaches... **The Focal Loss**
 
