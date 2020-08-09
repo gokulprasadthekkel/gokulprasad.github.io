@@ -1,0 +1,55 @@
+I"�<p>If you are a data scientist or an ML engineer, you frequently come across imbalanced datasets and when it comes to classifying them, it’s a mess! I had encountered this situation recently and tried out multiple approaches to address the problem. This article is about one of such approaches… <strong>The Focal Loss</strong></p>
+
+<h2 id="how-do-you-handle-imbalanced-data">How do you handle Imbalanced data?</h2>
+<p>There are a set of well established techniques to handle data imbalance. Some of them include:</p>
+<ul>
+  <li>Sampling techniques - Under sampling , Over sampling etc..</li>
+  <li>Weighted loss function</li>
+</ul>
+
+<p>A recent addition to this technique is <b>Focal Loss</b>, Originally developed by researchers from Facebook to handle extreme class imbalance between foreground and background in object detection tasks.You could read the original paper <a href="https://arxiv.org/abs/1708.02002">here</a>.</p>
+
+<h2 id="whats-focal-loss-whats-the-big-idea">What’s Focal Loss? What’s the big idea?</h2>
+<p>The idea behind focal loss is quiet simple. Based on the difficulty to classify, data points could be devided into two, <b> easy and hard examples</b>. In the cross-entropy loss setting, even though the loss contributed by easy examples aren’t huge,they are not very  close to zero either. Since in an imbalanced dataset we would be having a lot of easy-examples, together their loss would sum up to a significant portion of the total loss.</p>
+
+<p>To give you a concrete example, assue a scenario where we have 1000 data points. 950 belonging to class A and 50 belonging to class B.lets assume 900 of these data points are easy exampls and the rest are hard. For the sake of simplicity, lets assume each easy example contributes a loss of 0.1 units and hard examples contributes a loss of 0.9 units. even if the loss contributed by these examples are as small as 0.1, together they sum up to 0.01 * 900 = 90 , which is the same as loss contributed by hard examples. This makes learning difficult for hard-examples.</p>
+
+<p>Researchers at Facebook had addressed this problem by modifying the standard cross entropy loss such that it down-weights the loss assigned to well-classified examples.</p>
+
+<p>Quoting the authors:</p>
+<blockquote>
+  <p>We discover that the extreme foreground-background class imbalance encountered during training of dense detectors is the central cause. We propose to address this class imbalance by reshaping the standard cross entropy loss such that it down-weights the loss assigned to well-classified examples. Our novel Focal Loss focuses training on a sparse set of hard examples and prevents the vast number of easy negatives from overwhelming the detector during training</p>
+</blockquote>
+
+<p>As shown in the below figure, focal loss modifies the standard cross entropy loss by a factor (1-prob)**gamma . This would make sure that the well classified examples are contributing approximately zero units towards the loss.</p>
+
+<p><img src="/blog/assets/img/focalloss-graph.jpg" alt="focal loss graph" /></p>
+
+<p>In the implementation of focal loss, they uses another parameter <strong>alpha</strong> for addressing class weights.</p>
+
+<p><img src="/blog/assets/img/focalloss-equation.png" alt="focal loss equation" /></p>
+
+<h2 id="pytorch-implementation-of-focal-loss">PyTorch Implementation of focal loss</h2>
+<p>Here is an implementation of multi-class focal loss in PyTorch. It inherits from the <strong>_WeightedLoss</strong> base class.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">import</span> <span class="n">torch</span>
+<span class="n">import</span> <span class="n">torch</span><span class="p">.</span><span class="nf">nn</span> <span class="n">as</span> <span class="n">nn</span>
+<span class="n">import</span> <span class="n">torch</span><span class="p">.</span><span class="nf">nn</span><span class="p">.</span><span class="nf">functional</span> <span class="n">as</span> <span class="no">F</span>
+
+<span class="k">class</span> <span class="nc">FocalLoss</span><span class="p">(</span><span class="n">nn</span><span class="p">.</span><span class="nf">modules</span><span class="p">.</span><span class="nf">loss</span><span class="p">.</span><span class="nf">_WeightedLoss</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="no">None</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">reduction</span><span class="o">=</span><span class="s1">'mean'</span><span class="p">):</span>
+        <span class="k">super</span><span class="p">(</span><span class="no">FocalLoss</span><span class="p">,</span> <span class="nb">self</span><span class="p">).</span><span class="nf">__init__</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span><span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">)</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nf">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
+        <span class="nb">self</span><span class="p">.</span><span class="nf">weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="c1">#weight parameter will act as the alpha parameter to balance class weights</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="n">input</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+
+        <span class="n">ce_loss</span> <span class="o">=</span> <span class="no">F</span><span class="p">.</span><span class="nf">cross_entropy</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span><span class="n">reduction</span><span class="o">=</span><span class="nb">self</span><span class="p">.</span><span class="nf">reduction</span><span class="p">,</span><span class="n">weight</span><span class="o">=</span><span class="nb">self</span><span class="p">.</span><span class="nf">weight</span><span class="p">)</span>
+        <span class="n">pt</span> <span class="o">=</span> <span class="n">torch</span><span class="p">.</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">ce_loss</span><span class="p">)</span>
+        <span class="n">focal_loss</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pt</span><span class="p">)</span> <span class="o">**</span> <span class="nb">self</span><span class="p">.</span><span class="nf">gamma</span> <span class="o">*</span> <span class="n">ce_loss</span><span class="p">).</span><span class="nf">mean</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">focal_loss</span></code></pre></figure>
+
+<h2 id="does-it-make-a-difference">Does it make a difference?</h2>
+<p>Lets run some experiments to see if focal loss will actually make a difference or not!</p>
+
+:ET
