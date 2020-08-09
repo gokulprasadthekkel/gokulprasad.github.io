@@ -32,7 +32,10 @@ layout: main
           {% endfor %}
         </div>
       </div>
-      {% include disqus.html %}
+      <!--{% include disqus.html %} -->
+      {% if page.comments == true %}
+        {% include comments.html %}
+      {% endif %}
     </div> <!-- End Wrap Content -->
   </div> <!-- End Page Content -->
 </article> <!-- End Article Page -->
