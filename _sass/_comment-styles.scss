@@ -20,14 +20,14 @@ $spacing-unit:     30px !default;
 
 $table-text-align: left !default;
  
-// Width of the content area
-$content-width:    800px !default;
+// // Width of the content area
+// $content-width:    800px !default;
 
-$on-palm:          600px !default;
-$on-laptop:        800px !default;
+// $on-palm:          600px !default;
+// $on-laptop:        800px !default;
 
-$on-medium:        $on-palm !default;
-$on-large:         $on-laptop !default;
+// $on-medium:        $on-palm !default;
+// $on-large:         $on-laptop !default;
 
 
 // Use media queries like this:
@@ -39,11 +39,11 @@ $on-large:         $on-laptop !default;
 // }
 // Notice the following mixin uses max-width, in a deprecated, desktop-first
 // approach, whereas media queries used elsewhere now use min-width.
-@mixin media-query($device) {
-  @media screen and (max-width: $device) {
-    @content;
-  }
-}
+// @mixin media-query($device) {
+//   @media screen and (max-width: $device) {
+//     @content;
+//   }
+// }
 
 @mixin relative-font-size($ratio) {
   font-size: #{$ratio}rem;
@@ -72,10 +72,10 @@ fieldset {
 
 // each staticman text field is wrapped in this div
 .textfield {
-    width: auto;
-    max-width: 85%;
+    width: 85%;
     padding: 0.5rem 0;
     height:auto;
+    max-height: 400px;
 }
 
 // fields except the comment field get this class too
@@ -96,7 +96,8 @@ textarea {
     padding: 4px 5px;
     width: 85%;
     font-size: $comment-font-size;
-    height: 85%
+    height: 85%;
+    max-width: 400px;
 }
 .notify-me, .g-recaptcha {
     padding: 0.5rem 0;
@@ -169,10 +170,8 @@ button:hover {
     content: '';
     top: 0;
     left: 0;
-    max-width: 85%;
-    max-height: 85%;
-    width: auto;
-    height: auto;
+    width: 85%;
+    height: 85%;
     z-index: 999;
     background-color: rgba(255, 255, 255, 0.85);
 }
